@@ -27,6 +27,8 @@
 #   4172: Alcohol consumption (mean weekly units)"
 ### Physical activity profile:
 #   88888:  "Whether meets MVPA & muscle strengthening recommendations: Meets MVPA & muscle strengthening recommendations" N.B. INDICATOR NOT PUBLISHED YET: PUT IN TECHDOC WHEN READY TO PUBLISH.
+### Health board monitoring indicators:
+# 15003: Adults living with obesity
 
 ### And adding data for a further 21 indicators (12 adult mental health, 9 CYP mental health) that have been processed in the ScotPHO_survey_data repo 
 ### (raw data processing elsewhere because they use UK Data Service data)
@@ -191,7 +193,8 @@ keep <- c("Drinking over (6/8) units in a day (includes non-drinkers): Over 8 un
           "Fruit & vegetable consumption: 5 portions or more",  #30013                                                                          
           "Mental wellbeing", # 30001 (mean score, as in the indicator definition)                                                                                                           
           "General health questionnaire (GHQ-12): Score 4+", # 30003                                                                             
-          "Long-term conditions: Limiting long-term conditions" # 99109 
+          "Long-term conditions: Limiting long-term conditions", # 99109 
+          "Obesity: Obesity" # 15003
           #   "Long-term illness: Limiting long-term illness",  # 99109                                                                           
           #   "Life satisfaction: Above the mode (9 to 10-Extremely satisfied)", # 30002 (better definition than existing: mean score?)                                                             
           #   "Symptoms of anxiety: No anxiety symptoms", # 30005: would need the inverse... would this be valid?                                                                                    
@@ -219,7 +222,9 @@ shes_df <- shes_df %>%
                            #    ind == "Whether meets MVPA & muscle strengthening recommendations: Meets MVPA & muscle strengthening recommendations" ~ "meets_mvpa_and_strength_recs",
                                ind == "Drinking over (6/8) units in a day (includes non-drinkers): Over 8 units for men, over 6 units for women" ~ "binge_drinking",
                                ind == "Alcohol consumption: Hazardous/Harmful drinker" ~ "problem_drinker",
-                               ind == "Alcohol consumption (mean weekly units)" ~ "weekly_alc_units"),
+                               ind == "Alcohol consumption (mean weekly units)" ~ "weekly_alc_units",
+                               ind == "Obesity: Obesity" ~ "adult_obesity"),
+                              
          # Create new ind_id column
          ind_id = case_when(indicator == "self_assessed_health" ~ 99108,
                             indicator == "limiting_long_term_condition" ~ 99109,
@@ -232,7 +237,8 @@ shes_df <- shes_df %>%
                         #    indicator == "meets_mvpa_and_strength_recs" ~ 88888,
                             indicator == "binge_drinking" ~ 4170,
                             indicator == "problem_drinker" ~ 4171,
-                            indicator == "weekly_alc_units" ~ 4172)) %>% 
+                            indicator == "weekly_alc_units" ~ 4172,
+                            indicator == "adult_obesity" ~ 15003)) %>% 
   
   # Select relevant columns
   select(ind_id, indicator, code, year, trend_axis, def_period, sex, split_name, split_value, rate, lowci, upci, numerator)
@@ -424,6 +430,7 @@ prepare_final_files(ind = "cyp_sdq_conduct")
 prepare_final_files(ind = "cyp_sdq_hyperactivity")
 prepare_final_files(ind = "cyp_sdq_emotional")
 prepare_final_files(ind = "cyp_sdq_prosocial")
+prepare_final_files(ind = "adult_obesity")
 
 
 # Run QA reports 
@@ -461,6 +468,7 @@ run_qa(type = "main", filename = "cyp_sdq_conduct", test_file = FALSE)
 run_qa(type = "main", filename = "cyp_sdq_hyperactivity", test_file = FALSE)
 run_qa(type = "main", filename = "cyp_sdq_emotional", test_file = FALSE)
 run_qa(type = "main", filename = "cyp_sdq_prosocial", test_file = FALSE)
+run_qa(type = "main", filename = "adult_obesity", test_file = FALSE)
 
 
 # ineq data: 
@@ -497,6 +505,7 @@ run_qa(type = "deprivation", filename = "cyp_sdq_conduct", test_file = FALSE)
 run_qa(type = "deprivation", filename = "cyp_sdq_hyperactivity", test_file = FALSE)
 run_qa(type = "deprivation", filename = "cyp_sdq_emotional", test_file = FALSE)
 run_qa(type = "deprivation", filename = "cyp_sdq_prosocial", test_file = FALSE)
+run_qa(type = "deprivation", filename = "adult_obesity", test_file = FALSE)
 
 # popgrp data: 
 run_qa(type = "popgrp", filename = "self_assessed_health", test_file=FALSE)
@@ -532,6 +541,7 @@ run_qa(type = "popgrp", filename = "cyp_sdq_conduct", test_file = FALSE)
 run_qa(type = "popgrp", filename = "cyp_sdq_hyperactivity", test_file = FALSE)
 run_qa(type = "popgrp", filename = "cyp_sdq_emotional", test_file = FALSE)
 run_qa(type = "popgrp", filename = "cyp_sdq_prosocial", test_file = FALSE)
+run_qa(type = "popgrp", filename = "adult_obesity", test_file = FALSE)
 
 
 #END
